@@ -59,22 +59,40 @@ class GradeCalculatorTest {
         assertThrows(IllegalArgumentException.class, () -> calc.totalScore(10.0, 40.0, 10.0, 10.0, 30.5));
     }
 
+    @Test
+    @DisplayName("totalScore-ийн бүрэлдэхүүн хэсгийн жижиг хэлбэлзэлд IllegalArgumentException шидэх")
+    void fineBoundaryTotalScoreComponentsThrow() {
+        GradeCalculator calc = new GradeCalculator();
+        assertThrows(IllegalArgumentException.class, () -> calc.totalScore(-0.01, 20.0, 5.0, 5.0, 15.0));
+        assertThrows(IllegalArgumentException.class, () -> calc.totalScore(10.01, 20.0, 5.0, 5.0, 15.0));
+        assertThrows(IllegalArgumentException.class, () -> calc.totalScore(10.0, 40.01, 5.0, 5.0, 15.0));
+        assertThrows(IllegalArgumentException.class, () -> calc.totalScore(10.0, 20.0, 10.01, 5.0, 15.0));
+        assertThrows(IllegalArgumentException.class, () -> calc.totalScore(10.0, 20.0, 5.0, 10.01, 15.0));
+        assertThrows(IllegalArgumentException.class, () -> calc.totalScore(10.0, 20.0, 5.0, 5.0, 30.01));
+    }
+
     @ParameterizedTest(name = "оноо={0} -> дүн={1}")
     @CsvSource({
+            "99.99,A",
             "95,A",
             "90,A",
             "89.99,B",
+            "89.9,B",
             "85,B",
             "80,B",
+            "79.9,C",
             "75,C",
             "70,C",
+            "69.9,D",
             "65,D",
             "60,D",
             "59.99,F",
+            "59.9,F",
             "30,F",
+            "0.01,F",
             "0,F"
     })
-    @DisplayName("Ердийн ба хязгаарын оноонуудыг parameterized тестээр шалгах")
+    @DisplayName("Ердийн, нарийн бутархай ба хязгаарын оноонуудыг parameterized тестээр шалгах")
     void letterGradeBoundaries(double score, String expected) {
         GradeCalculator calc = new GradeCalculator();
         String actual = calc.letterGrade(score);
